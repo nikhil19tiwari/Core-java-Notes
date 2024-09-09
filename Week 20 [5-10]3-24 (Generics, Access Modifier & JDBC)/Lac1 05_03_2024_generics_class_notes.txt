@@ -1,0 +1,301 @@
+Generics
+   => Collection using generics promotes
+	a. typesafety.
+	b. typecasting is not required.
+
+In case of typecasting polymorphism is applicable only for "basetype" not for "parametertype".
+In case of typecasting we can control the typeparameter of a class using "boundedtypes".
+case1:
+	class Test<T extends X>
+			     |=> if X is an interface then it should be "InterfaceType" or "ImplementationClass" type.
+			     |=> if X is an class, then it should be "classType" or its "ChildClassType".
+
+case2: 
+	We can use Boundedtypes in combination also
+		Rule: class Test< T extends X & Y>
+					    |-> X is class,then y should be interface.
+
+
+Generic methods and wildcard patterns(?)
++++++++++++++++++++++++++++++++++++++++++
+case1:methodOne(ArrayList<String>al)
+		=> Inside al we can add only String type of data
+			
+case2:methodOne(ArrayList<?> al)	
+		=> We can call this method by passing ArrayList<?> holding anytype of Object
+		=> Inside ArrayList we can add only "null" type of data.
+	
+
+case3:methodOne(ArrayList<? extends X> al)
+		=> We can call this method by passing ArrayList<? extends X> where 
+			X -> X can be class or interface.
+			X -> If X refers to class, then it can be class or its child type
+			X -> If X refers to interface, then it can be interfacae type or its implementation class.
+
+		=> Inside ArrayList we can add only "null" type of data.
+
+
+
+case4: methodOne(ArrayList<? super X> al)
+		=> We can call this method by passing ArrayList<? super X> where 
+			X -> X can be class or interface.
+			X -> If X refers to class, then it can be X type or its Parent type
+			X -> If X refers to interface, then it can be interface type or its super classes of implementation of X.
+
+
+
+eg#1.
+	Runnable
+   	   |
+           |
+	Thread extends Object
+
+	methodOne(ArrayList<? super Runnable> al)
+					|=> Object
+
+
+ArrayList<String> al = new ArrayList<String>();//valid
+
+ArrayList<?> al      = new ArrayList<String>();//valid
+ArrayList<?> al      = new ArrayList<Integer>();//valid
+
+ArrayList<? extends Number>al = new ArrayList<Integer>();//valid
+
+ArrayList<? extends Number>al = new ArrayList<String>();//invalid
+
+ArrayList<?> al = new ArrayList<? extends Number>(); //invalid
+
+ArrayList<?> al = new ArrayList<?>();//invalid
+
+
+Declaring TypeParameter at the classLevel
++++++++++++++++++++++++++++++++++++++++++
+class Test<T>
+{
+
+}
+
+Declaring TypeParameter at the MethodLevel
+++++++++++++++++++++++++++++++++++++++++++
+   Just declare before the returntype
+
+1. public <T> void methodOne(T t){}//valid
+2. public <T extends Number> void methodOne(T t){}//valid
+3. public <T extends Number&Comparable> void methodOne(T t){}//valid
+4. public <T extends Number&Comparable&Runnable> void methodOne(T t){}//valid
+5. public <T extends Number&Thread> void methodOne(T t){}//invalid
+6. public <T extends Runnable&Comparable> void methodOne(T t){}//valid
+
+
+Communication of GenericCode with Non-Generic Code
++++++++++++++++++++++++++++++++++++++++++++++++++
+To provide compatibility with old version sun people compramized the concept of generics in very few area's the following is one such area.
+
+Example: 
+import java.util.ArrayList;
+class Test
+{
+	//JDK18
+	public static void main(String[] args)
+	{
+		//JDK1.5V
+		//Generic version of ArrayList 
+		ArrayList<String> al =new ArrayList<String>();
+		al.add("sachin");
+		
+
+		methodOne(al);
+		System.out.println(al);/[sachin, 10, 54.5, true]
+	}
+
+	//JDK1.4V
+	public static void methodOne(ArrayList al)
+	{
+		//ArrayList al :: NonGeneric Version
+		al.add(10);
+		al.add(54.5f);
+		al.add(true);
+	}
+}
+
+Output
+[sachin, 10, 54.5, true]
+
+Conclusions :
+Generics concept is applicable only at compile time, at runtime there is no such type of concept. 
+At the time of compilation, as the last step generics concept is removed,hence for jvm generics syntax won't be available.
+Hence the following declarations are equal.
+
+	ArrayList l=new ArrayList<String>();
+	ArrayList l=new ArrayList<Integer>();
+	ArrayList l =new Arraylist<Double>(); 
+
+All are equal at runtime,becoz compiler will remove these generics syntax
+	ArrayList l=new ArrayList();
+
+
+Example 1: 
+import  java.util.*;
+class Test {
+	public static void main(String[] args) {
+		ArrayList l=new ArrayList<String>();
+		l.add(10);
+		l.add(10.5);
+		l.add(true);
+		System.out.println(l);// [10, 10.5, true]
+	}
+}
+
+Example 2: 
+import java.util.*;
+class Test {
+	public void methodOne(ArrayList<String> l){}
+	public void methodOne(ArrayList<Integer> l){}
+}
+CE: duplicate methods found
+error: name clash: methodOne(ArrayList<Integer>) and methodOne(ArrayList<String>) have the same erasure
+
+Example3:
+The following 2 declarations are equal.
+ArrayList<String> al4 = new ArrayList();
+ArrayList<String> al5 = new ArrayList<String>();
+ArrayList<String> al6 = new ArrayList<>();
+
+For these ArrayList objects we can add only String type of objects.
+l1.add("A");//valid
+l1.add(10); //invalid
+
+
+Example4:
+List<Map<Integer,String>> al1 = new ArrayList<Map<Integer,String>>();
+List<Map<Integer,String>> al2 = new ArrayList<>();
+List<Map<Integer,String>> al3 = new ArrayList();
+
+Example5:
+ArrayList<String> jdk7 =new ArrayList<String>();
+ArrayList<String> jdk8=new ArrayList<>();//Extension of diamondoperator in jdk8 version
+ArrayList<String> jdk9 =new ArrayList<>()//Extension of dimanonoperator in jdk9 and above version
+{
+			
+};
+
+Example6:
+import java.util.*;
+
+class MyGenClass<T>
+{
+	T obj;
+	public MyGenClass(T obj){
+		this.obj =obj;
+	}
+	public T getObj(){
+		return obj;
+	}
+	public void process(){
+		System.out.println("Processing obj....");
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		MyGenClass<String> c1 =new MyGenClass<>("sachin"){
+			
+			@Override
+			public void process(){
+				System.out.println("Processing :: "+getObj());
+			}
+		};
+		c1.process();
+
+		MyGenClass<String> c2 =new MyGenClass<>("dhoni"){
+			
+			@Override
+			public void process(){
+				System.out.println("Processing :: "+getObj());
+			}
+		};
+		c2.process();
+		
+	}
+}
+Output 
+ JDKVersion :: 1.8
+D:\OctBatchMicroservices\Test.java:20: error: cannot infer type arguments for MyGenClass<T>
+                MyGenClass<String> c1 =new MyGenClass<>("sachin"){
+                                                     ^
+  reason: cannot use '<>' with anonymous inner classes
+  where T is a type-variable:
+    T extends Object declared in class MyGenClass
+D:\OctBatchMicroservices\Test.java:29: error: cannot infer type arguments for MyGenClass<T>
+                MyGenClass<String> c2 =new MyGenClass<>("dhoni"){
+                                                     ^
+  reason: cannot use '<>' with anonymous inner classes
+  where T is a type-variable:
+    T extends Object declared in class MyGenClass
+
+Output
+   JDKVersion :: 9 and above
+D:\OctBatchMicroservices>java -version
+java version "18.0.1.1" 2022-04-22
+Java(TM) SE Runtime Environment (build 18.0.1.1+2-6)
+Java HotSpot(TM) 64-Bit Server VM (build 18.0.1.1+2-6, mixed mode, sharing)
+
+D:\OctBatchMicroservices>javac Test.java
+D:\OctBatchMicroservices>java Test
+Processing :: sachin
+Processing :: dhoni
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

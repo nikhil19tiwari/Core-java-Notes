@@ -1,0 +1,680 @@
+Collection API
+++++++++++++++
+
+interfaces
+++++++++++
+1. Collection
+2. List
+		
+3. Set		
+		Implementation class :: HashSet,LinkedHashSet
+4. SortedSet
+5. NavigableSet[1.6v]
+		Implementation class :: TreeSet
+
+When to use Set(I) implementation class Objects?
+Ans. Duplicates are not allowed
+     Insertion Order is not preserved
+
+Note: To iterate any type of Collection object,the Collection Object should be "Iterable".
+      For Collection Interface the Parent interface is "Iterable",so Iterator interface can be used for all the Objects.
+
+Note: Map(I) is not a part of Collection.
+
+6. Map(<K,V>)		
+		Implementation :: HashMap,WeakHashMap,IdentityHashMap
+				  Dictionary,Hashtable,Properties
+7. SortedMap
+8. NavigableMap[1.6V]
+		Implementation :: TreeMap
+
+9. Queue[1.5V]
+	Implementation class : BlockingQueue,PriorityBlockingQueue,...
+	
+When to use Queue(I) implementation class Objects?
+Ans. if we want to represent group of individual objects prior to processing then we should go for Queue.
+
+
+When to go for List(I) implementation class Objects?
+Ans. duplciates are allowed, insertion order is preserved
+	  List :: ArrayList, LinkedList
+	  Legacy Classes :: Vector,Stack
+
+When to go for Set(I) implementation class Objects?
+Ans. duplicates are not allowed, insertion order is not preserved
+	  Set :: HashSet, LinkedHashSet
+        SortedSet       :: TreeSet[By default Data Allowed are :: Homogenous,Comparable, otherwise :: ClassCastException]
+        NavigableSet              [null not allowed if we try to keep :: NullPointerException]
+	  
+
+Name the cursors available for iterating the Collection Objects
+ a. Enumeration(I)  => Legacy Cursor.[Vector, Stack]
+		    => we can perform only read operation in forward direction.
+
+ b. Iterator(I)     => Universal Cursor as it can be iterated on every collection Object.
+		       we can perform read in forward direction and remove operation.
+
+ c. ListIterator(I) => It can be used only on List(I) implementation class Object. 
+			we can perform read,update,delete and also we can iterate in forward and backward direction.
+
+Name the interfaces available for Sorting the Objects
+ a. Comparable(I) :: meant for Default Natural Sorting Order.
+ b. Comparator(I) :: meant for Customized Sorting Order.
+
+
+Map
+===
+=> It is not a child interface of Collection.
+=> If we want to represent group of Objects as key-value pair then we need to go for Map.
+=> Both keys and values are Objects only
+=> Duplicate keys are not allowed but values are allowed.
+=> Key-value pair is called as "Entry".
+
+Map interface
+==============
+ 1. It contains 12 methods which is common for all the implementation Map Objects
+
+a. Object put(Object key,Object value)
+b. void putAll(Map m)
+c. Object get(Object key)
+d. Object remove(Object key)
+e. boolean containsKey(Object key)
+f. boolean containsValue(Object value)
+g. boolean isEmpty()
+h. int size()
+i. void clear()
+================
+views of a Map
+	j.Set keySet()
+	k.Collection values()
+	l.Set entrySet()
+
+Entry(I)
+=======
+ 1. Each key-value pair is called Entry.
+ 2. Without existence of Map,there can't be existence of Entry Object.
+ 3. Interface Entry is defined inside Map interface.
+
+interface Map{
+	interface Entry{
+		Object getKey();
+		Object getValue();
+		Object setValue(Object newValue);
+	}
+}
+HashMap
+=======
+ Underlying DataStructure: Hashtable
+ insertion order          : not preserved
+ duplicate keys           : not allowed
+ duplicate values       : allowed
+ Heterogenous objects    : allowed
+ null insertion          : for keys allowed only once,but for values can be any no.
+ implementation interface: Serializable,Cloneable.
+
+Difference b/w HashMap and Hashtable
+====================================
+ HashMap  => All the methods are not synchronized.
+ Hashtable => All the methods are synchronzied.
+
+ HashMap   => At a time multiple threads can operate on a Object, so it is ThreadSafe.
+ Hashtable  => At a time only one Thread can operate on a Object, so it is not ThreadSafe.
+
+ HashMap   => Pefromance is high.
+ Hashtable => performance is low.
+
+ HashMap   => null is allowed for both keys and values.
+ Hashtable => null is not allowed for both keys and values,it would result in NullPointerException.
+
+ HashMap   => Introduced in 1.2v
+ Hashtable => Introduced in 1.0v
+
+Note: By default HashMap is nonSynchronized,to get the synchronized version of HashMap we need to use synchronizedMap() 
+      of Collection class.
+
+Constructors
+============
+ 1. HashMap hm=new HashMap()
+             //default capacity => 16, loadfactor => 0.75
+
+ 2. Hashmap hm=new HashMap(int capacity);
+	    
+ 3. HashMap hm=new HashMap(int capacity,flot fillration);
+
+ 4. HashMap hm=new HashMap(Map m);
+
+
+eg#1.
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		//Underlying DS   :: Hashtable
+		//Insertion Order :: not preserved[uses Hashing technique]
+		//Duplicates      :: Key no, but value can be duplicated
+		// null           :: Key allowed only once,but value any no of times
+
+		System.out.println("****HASHMAP*********");
+		HashMap hm = new HashMap();
+		hm.put(10,"sachin");
+		hm.put(7,"dhoni");
+		hm.put(18,"virat");
+		hm.put(1,"rahul");
+		hm.put(45,"rohith");
+		System.out.println(hm);//{1=rahul, 18=virat, 7=dhoni, 10=sachin, 45=rohith}
+
+		Set keys = hm.keySet();
+		System.out.println(keys);//[1, 18, 7, 10, 45]
+
+		Collection c= hm.values();
+		System.out.println(c);//[rahul, virat, dhoni, sachin, rohith]
+
+		Set set = hm.entrySet();
+		//[1=rahul, 18=virat, 7=dhoni, 10=sachin, 45=rohith]
+		System.out.println(set);
+
+		System.out.println();
+
+		//Getting the iterator
+		Iterator itr = set.iterator();
+		while (itr.hasNext())
+		{
+			Map.Entry m = (Map.Entry)itr.next();
+			System.out.println("key is :: "+m.getKey());
+			System.out.println("Value is :: "+m.getValue());
+			System.out.println();
+		
+			//Method used for Updation
+			if ((Integer)m.getKey() == 10)
+			{
+				m.setValue("sachinrameshtendulkar");
+			}
+
+		}
+		System.out.println(hm);
+		hm.put(null,null);
+		System.out.println(hm);
+
+
+		System.out.println();
+
+		System.out.println("****HASHTABLE*********");
+		
+		Hashtable ht = new Hashtable();
+		ht.put(null,null);
+		System.out.println(ht);
+
+
+	}
+}
+Output
+****HASHMAP*********
+{1=rahul, 18=virat, 7=dhoni, 10=sachin, 45=rohith}
+[1, 18, 7, 10, 45]
+[rahul, virat, dhoni, sachin, rohith]
+[1=rahul, 18=virat, 7=dhoni, 10=sachin, 45=rohith]
+
+key is :: 1
+Value is :: rahul
+
+key is :: 18
+Value is :: virat
+
+key is :: 7
+Value is :: dhoni
+
+key is :: 10
+Value is :: sachin
+
+key is :: 45
+Value is :: rohith
+
+{1=rahul, 18=virat, 7=dhoni, 10=sachinrameshtendulkar, 45=rohith}
+{null=null, 1=rahul, 18=virat, 7=dhoni, 10=sachinrameshtendulkar, 45=rohith}
+
+****HASHTABLE*********
+Exception in thread "main" java.lang.NullPointerException
+        at java.util.Hashtable.put(Hashtable.java:460)
+        at Test.main(Test.java:59)
+
+
+LinkedHashMap
+=============
+ => It is the child class of HashMap.
+ => It is same as HashMap,but with the following difference
+
+       HashMap             => underlying datastructure is hashtable.
+       LinkedHashMap => underlying datastructure is LinkedList + hashtable.
+
+       HashMap             => insertion order not preserved.
+       LinkedHashMap => insertion order preserved.
+
+       HashMap             => introduced in 1.2v
+       LinkedHashMap => introduced in 1.4v
+
+
+In the above program, if we replace HashMap with LinkedHashMap then the output would be
+****LinkedHASHMAP*********
+{10=sachin, 7=dhoni, 18=virat, 1=rahul, 45=rohith}
+
+[10, 7, 18, 1, 45]
+
+[sachin, dhoni, virat, rahul, rohith]
+
+[10=sachin, 7=dhoni, 18=virat, 1=rahul, 45=rohith]
+
+key is :: 10
+Value is :: sachin
+
+key is :: 7
+Value is :: dhoni
+
+key is :: 18
+Value is :: virat
+
+key is :: 1
+Value is :: rahul
+
+key is :: 45
+Value is :: rohith
+
+{10=sachinrameshtendulkar, 7=dhoni, 18=virat, 1=rahul, 45=rohith}
+{10=sachinrameshtendulkar, 7=dhoni, 18=virat, 1=rahul, 45=rohith, null=null}
+
+
+Note: for developing cache based applications, we use HashMap and LinkedHashMap where duplicates
+            are not allowed,but insertion order preserved.
+
+IdentityHashMap
+===============
+ It is same as HashMap, with the following differences.
+
+a. In case of HashMap,jvm will use equals() to check whether the keys are duplicated or not.
+    	equals() => meant for ContentComparison.
+
+b. In case of IdentityHashMap,jvm wil use == operator to identify whether the keys are duplicated.
+    or not.
+
+
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		Integer i1 =new Integer(10);
+		Integer i2 =new Integer(10);
+
+
+		System.out.println("******HashMap********");
+		HashMap hm = new HashMap();
+		hm.put(i1,"sachin");
+		hm.put(i2,"messi");
+		//{10=messi}
+		System.out.println(hm);//JVM :: i1.equals(i2) :: true
+	
+		System.out.println();
+
+		System.out.println("******IdentityHashMap********");
+		IdentityHashMap ihm =new IdentityHashMap();
+		ihm.put(i1,"sachin");
+		ihm.put(i2,"messi");
+		//{10=sachin,10=messi}
+		System.out.println(ihm);//JVM :: i1 == i2  :: false
+	}
+}
+
+
+WeakHashMap
+==========
+ It is exactly same as HashMap, with the following differences.
+1. HashMap will always dominate Garbage Collector, that is if the Object is a part of HashMap
+   and if the Object is Garbage Object, still Garbage Collector won't remove that Object from
+   heap since it is a part of HashMap. HashMap dominates GarbageCollector.
+2. Garbage Collector will dominate WeakHashMap, that is if the Object is part of WeakHashMap and
+   if that Object is Garbage Object, then immediately Garbage Collector will remove that Object
+   from heap even though it is a part of WeakHashMap, so we say Garbage Collector dominates
+   "WeakHashMap".
+
+eg#1.
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args) throws Exception
+	{
+		System.out.println("*******WeakHashMap********");
+
+		WeakHashMap whm = new WeakHashMap();
+		Temp t = new Temp();
+		whm.put(t,"sachin");
+
+		//Making object Garbage
+		t =null;
+
+		//Explicitly Calling Garbage Collector
+		System.out.println("Signal to Garbage Collector...");
+		System.gc();
+
+		Thread.sleep(5000);
+		System.out.println(whm);//{}
+		
+	}
+}
+class Temp
+{
+	@Override
+	public String toString(){
+		return "Temp";
+	}
+
+	@Override
+	public void finalize(){
+		System.out.println("Garbage Collector Cleaning the Object...");
+	}
+}
+Output
+*******WeakHashMap********
+Signal to Garbage Collector...
+Garbage Collector Cleaning the Object...
+{}
+
+
+eg#2.
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args) throws Exception
+	{
+		System.out.println("*******HashMap********");
+
+		HashMap hm = new HashMap();
+		Temp t = new Temp();
+		hm.put(t,"sachin");
+
+		//Making object Garbage
+		t =null;
+
+		//Explicitly Calling Garbage Collector
+		System.out.println("Signal to Garbage Collector...");
+		System.gc();
+
+		Thread.sleep(5000);
+		System.out.println(hm);//{}
+		
+	}
+}
+class Temp
+{
+	@Override
+	public String toString(){
+		return "Temp";
+	}
+
+	@Override
+	public void finalize(){
+		System.out.println("Garbage Collector Cleaning the Object...");
+	}
+}
+
+Output
+*******HashMap********
+Signal to Garbage Collector...
+{Temp=sachin}
+
+SortedMap
+=========
+ 1. It is the child interfae of Map
+ 2. If we want Entry object to be sorted and stored inside the map,we need to used "SortedMap".
+ 
+SortedMap defines few specific method like
+ a. Object firstKey()
+ b. Object lastKey()
+ c. SortedMap headMap(Object key)
+ d. SortedMap tailMap(Object key)
+ e. SortedMap subMap(Object obj1,Object obj2)
+ f. Compartor compartor()
+
+TreeMap
+=======
+ 1. Underlying datastructure is "redblacktree".
+ 2. Duplicate keys are not allowed,where as values are allowed.
+ 3. Insertion order is not preserved and it is based on some sorting order.
+ 4. If we are depending on natural sorting order,then those keys should be homogenous and it  should be Comparable otherwise ClassCastException.
+ 5. If we are working on customisation through Comparator,then those keys can be heterogenous and  it can be NonComparable.
+ 6. No restrictions on values, it can be heterogenous or NonComparable also.
+ 7. If we try to add null Entry into TreeMap, it would result in "NullPointerException".
+
+Constructors of TreeMap
+=======================
+ TreeMap t=new TreeMap();
+ TreeMap t=new TreeMap(Comparator c)
+ TreeMap t=new TreeMap(SortedMap m);
+ TreeMap t=new TreeMap(Map m)
+
+eg#1.
+import java.util.*;
+
+class MyComparator implements Comparator
+{
+	@Override
+	public int compare(Object obj1,Object obj2)
+	{
+		Integer i1 = (Integer)obj1;
+		Integer i2 = (Integer)obj2;
+
+		return -i1.compareTo(i2);
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		//Underlying DS :: RedBlackTree
+		//Comparable :: DNS(ascending order)
+
+		TreeMap tm1 = new TreeMap();
+		tm1.put(100,"ZZZ");
+		tm1.put(103,"YYY");
+		tm1.put(101,"XXX");
+		tm1.put(104,106);
+		tm1.put(106,null);
+		//tm.put("FFF",106);//CCE
+		//tm.put(null,107);//NPE
+		System.out.println(tm1);//{100=ZZZ, 101=XXX, 103=YYY, 104=106, 106=null}
+	
+		System.out.println();
+
+		TreeMap tm2 = new TreeMap(new MyComparator());
+		tm2.put(100,"ZZZ");
+		tm2.put(103,"YYY");
+		tm2.put(101,"XXX");
+		tm2.put(104,106);
+		tm2.put(106,null);
+
+		System.out.println(tm2);//{106=null, 104=106, 103=YYY, 101=XXX, 100=ZZZ}
+
+	}
+}
+
+
+Hashtable:
+=> The Underlying Data Structure for Hashtable is Hashtable Only.
+=> Duplicate Keys are Not Allowed. But Values can be Duplicated.
+=> Insertion Order is Not Preserved and it is Based on Hashcode of the Keys.
+=> Heterogeneous Objects are Allowed for Both Keys and Values.
+=> null Insertion is Not Possible for Both Key and Values. Otherwise we will get Runtime 
+      Exception Saying NullPointerException.
+=> It implements Serializable and Cloneable,but not RandomAccess.
+=> Every Method Present in Hashtable is Synchronized and Hence Hashtable Object is Thread 
+      Safe,so best suited when we work with Search Operation.
+
+Constructors:
+1) Hashtable h = new Hashtable();
+ 	Creates an Empty Hashtable Object with Default Initial Capacity 11 and 
+        Default Fill Ratio 0.75.
+2) Hashtable h = new Hashtable(intinitialcapacity);
+3) Hashtable h = new Hashtable(intinitialcapacity, float fillRatio);
+4) Hashtable h = new Hashtable(Map m);
+
+
+import java.util.Hashtable;
+class  HashtableDemo {
+	public static void main(String[] args) {
+		Hashtable h = new Hashtable();
+		h.put(new Temp(5), "A");
+		h.put(new Temp(2), "B");
+		h.put(new Temp(6), "C");
+		h.put(new Temp(15), "D");
+		h.put(new Temp(23), "E");
+		h.put(new Temp(16), "F");
+		h.put("sachin",null); //RE: java.lang.NullPointerException
+		System.out.println(h); //{6=C, 16=F, 5=A, 15=D, 2=B, 23=E}
+     }
+}
+class Temp{
+	int i;
+	Temp(int i){
+		this.i=i;
+	}
+	public int hashCode(){
+		return i;
+	}
+	public String toString(){
+		return i+" ";
+	}
+
+}
+
+Scenario2: public int hashCode(){ return i%9;}
+Scenario3: Hashtable h=new Hashtable(25);
+	   public int hashCode(){ return i;}
+
+Properties:
+=> It is the Child Class of Hashtable.
+=> In Our Program if anything which Changes Frequently (Like Database User Name, Password, Database URLs Etc) 
+     Never Recommended to Hard Code in Java Program. 
+=> Because for Every Change in Source File we have to Recompile, Rebuild and Redeploying 
+     Application and Sometimes Server Restart Also Required, which Creates Business Impact to the Client.
+=> To Overcome this Problem we have to Configure Such Type of Propertiesin Properties File.
+=> The Main Advantage in this Approach is if a there is a Change in Properties File, to Reflect that Change Just Redeployment is Enough, 
+      which won't Create any Business Impact.
+=> We can Use Properties Object to Hold Properties which are coming from Properties File.
+
+
+Constructor:
+	Properties p = new Properties();
+
+1) public String getProperty(String pname);
+	To Get the Value associated with specified Property.
+2) public String setProperty(String pname, String pvalue);
+	To Set a New Property.
+3) public Enumeration propertyNames();It Returns All Property Names.
+4) public void load(InputStream is);
+	To Load Properties from Properties File into Java Properties Object.
+5) public void store(OutputStreamos, String comment);
+	To Store Properties from Java Properties Object into Properties File
+
+
+
+
+eg#1.
+
+application.properties
+++++++++++++++++++++++
+#key for Oracle Environment
+#Change values as per ur testing db environment
+jdbcUrl  = jdbc:oracle:thin:@localhost:1521:XE
+user     = System
+password = pwskills123
+
+
+Test.java
++++++++++
+//By default searching happens in rt.jar
+import java.util.*;
+import java.io.*;
+
+public class Test
+{
+	public static void main(String[] args)throws Exception
+	{
+		//Creating a Properties Object
+		Properties p = new Properties();
+
+		//Establishing Stream b/w java and .properties file
+		FileInputStream fis = new FileInputStream("application.properties");
+
+		//bind the data of .properties file to Properties Object
+		p.load(fis);
+
+		//Get the data from Properties Object
+		String jdbcUrl  = p.getProperty("jdbcUrl");
+		String user     = p.getProperty("user");
+		String password = p.getProperty("password");
+		
+		//use this data as required by the application
+		System.out.println(jdbcUrl);
+		System.out.println(user);
+		System.out.println(password);
+
+	}
+}
+Output
+jdbc:oracle:thin:@localhost:1521:XE
+System
+pwskills123
+
+
+Tuesday :: 7.30PM to 10.30PM
+Topics Pending
++++++++++++++++
+1. Object class methods 
+2. Generics
+3. Packages and access modifiers
+4. Inner class and its details
+5. Garbage Collector
+6. JVM Architecture
+7. Regular Expression
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

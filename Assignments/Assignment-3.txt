@@ -1,0 +1,39 @@
+By :- Priyanshu Gour || Email :- priyanshugournotes1@gmail.com || Mo.No. :- 9098393937
+
+
+Assignment No. 3 :
+
+Q. 1 : What is the difference between JVM, JRE and JDK ?
+Ans :  Java Virtual Machine (JVM) is a virtualization engine that executes Java bytecode. Java Runtime Environment (JRE) includes JVM along with libraries and other components necessary for running Java applications. Java Development Kit (JDK) is a complete development kit that includes JRE along with development tools and libraries for creating Java applications.
+
+
+Q. 2 : How is Java programming language machine and platform independent ?
+Ans : Java achieves platform independence through the "Write Once, Run Anywhere" (WORA) principle. Java code is compiled into an intermediate form called bytecode, which can be executed on any device with a Java Virtual Machine (JVM), regardless of the underlying hardware and operating system.
+
+
+Q. 3 : Explain how Java programs are executed by the JVM ?
+Ans : Java programs are first compiled into bytecode by the Java compiler. The JVM then interprets or compiles this bytecode into machine code, specific to the host machine, during runtime. The JVM manages memory, handles garbage collection, and ensures the execution of Java programs in a platform-independent manner.
+
+
+
+Q. 4 : What is the use of var args ?
+Ans : Varargs, short for variable-length argument lists, allows a method to accept a variable number of arguments. It is denoted by an ellipsis (...) and allows flexibility in the number of parameters passed to a method. Varargs simplify method calls where the exact number of arguments may vary.
+
+
+
+Q. 5 : What are the types of variables in Java ?
+Ans : In Java, variables can be categorized into three types:
+Local variables: Declared within a method and have local scope.
+Instance variables (or fields): Belong to an instance of a class and have instance scope.
+Static variables: Belong to the class itself and have class-wide scope.
+
+
+
+
+Q. 6 : How many types of memory areas are allocated by JVM ?
+Ans : JVM allocates memory into several areas, including the heap, method area, program counter, native method stack, and Java stack. These areas serve different purposes, such as storing objects, method code, and managing program execution.
+
+
+
+Q. 7 : What is Just-in-time Compiler (JIT) ?
+Ans : Just-in-time Compiler (JIT) is a component of the JVM that translates Java bytecode into machine code at runtime. Instead of interpreting bytecode line by line, the JIT compiler compiles entire methods into native machine code, which can significantly improve the execution speed of Java programs.

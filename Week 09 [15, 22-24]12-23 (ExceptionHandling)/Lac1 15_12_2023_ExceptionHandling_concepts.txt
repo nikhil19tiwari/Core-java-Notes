@@ -1,0 +1,76 @@
+ExceptionHandling
+=================
+1. Introduction
+2. Runtime stack mechanism
+3. Default exception handling in java
+4. Exception hierarchy
+5. Customized exception handling by try catch
+6. Control flow in try catch
+7. Methods to print exception information
+8. Try with multiple catch blocks
+9. finally
+10. Difference between final, finally, finalize
+11. Control flow in try catch finally
+12. Control flow in nested try catch finally
+13. Various possible combinations of try catch finally
+14. throw keyword
+15. throws keyword
+16. Exception handling keywords summary
+17. Various possible compile time errors in exception handling
+18. Customized exceptions
+19. Top-10 exceptions
+20. 1.7 Version Enhancements
+    1. try with resources
+    2. multi catch block
+21. Exception Propagation 
+22. Rethrowing an Exception
+
+Exception
+=========
+=> An unwanted/expected event that disturbs the normal flow of execution of program is called "Exception handling".
+=> The main objective of Exception handling is to handle the exception.
+=> It is available for graceful termination of program.
+
+
+
+What is the meaning of Exception handling?
+ Exception handling means not repairing the exception.
+ We have to define alternative way to continue rest of the program normally.
+ This way of defining an alternative is nothing but "Exception handling".
+
+example
+   Suppose our programming requirement is to read a data from a file locating at one location,
+   At run time if the file is not available then our programm should terminate succesfully.
+   Solution:: Provide the local file to terminate the program succesfully,This way of defining alternative is nothing but "Exception handling".
+
+
+eg#1.
+   try{
+      read data from London file
+   }
+   catch(FileNotFoundException e){
+     use local file and continue rest of the program normally
+   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+JDBCAPI
++++++++
+1. Load and register the driver(option from JDBC4.X : Autoloading)
+2. Establish the connection b/w java application and database(supply username and password of db)
+
+   //Requirement speicfic
+3. Prepare Statement Object(To carry the Query)
+4. Execute the Query(Send the query to DBE)
+5. Process the result(Non-SelectQuery : int, SelectQuery : ResultSet)
+
+6. Close the resources.
+
+Step1,2,3 (common for JDBCAPI)
+
+
+interfaces
+++++++++++
+java.sql package
+
+ a. Driver
+ b. Connection
+ c. Statement
+ d. PreparedStatement
+ e. CallableStatement
+ f. ResultSet
+ g. ResultSetMetaData
+ h. DatabaseMetaData
+
+javax.sql package
+
+ a. DataSource
+ b. RowSet
+ c. RowSetListener
+ d. ConnectionEventListener
+ e. StatementEventListener
+
+classes
++++++++
+java.sql package
+
+ a. DriverManager
+ b. Date
+ c. Time
+ d. TimeStamp
+ e. Types
+
+javax.sql package
+
+ a. ConnectionEvent
+ b. RowSetEvent
+ c. StatementEvent
+
+working with Date operation in database
++++++++++++++++++++++++++++++++++++++++
+package com.pwskills.nitin;
+
+import java.text.SimpleDateFormat;
+
+public class TestApp {
+
+	public static void main(String[] args) throws Exception {
+
+		String indianUser = "03-01-1993";
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy");
+		java.util.Date utilDate = sdf.parse(indianUser);
+		long inputMs = utilDate.getTime();
+		java.sql.Date sqlDate = new java.sql.Date(inputMs);
+		System.out.println("SQlDate information is :: "+sqlDate);
+		
+		//Converting to java.sql.Date directly if the input format is "yyyy-mm-dd"
+		String chinaUser = "1993-01-03";
+		java.sql.Date sqlOutput = java.sql.Date.valueOf(chinaUser);
+		System.out.println("SQLDate information is :: "+sqlOutput);
+
+	}
+
+}
+
+
+

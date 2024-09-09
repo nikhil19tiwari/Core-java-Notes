@@ -1,0 +1,95 @@
+JDBC
+++++
+ Download the mysql/j jar from the following link
+	https://dev.mysql.com/downloads/connector/j/
+		select Operating system as
+			platform independent
+					(choose .zip file)
+
+
+Steps given by OracleTeam to connect java to database
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1. Load and register the driver
+2. Establish the connection b/w java application and database
+3. Create statement object
+4. Send and execute the query
+5. Process Result from ResultSet
+6. Close the Connection
+
+
+Working with MySQL Database
+++++++++++++++++++++++++++
+1. Open sql from command line(by entering the password given during the installation)
+
+mysql> create database pwskills_octbatch;
+Query OK, 1 row affected (0.03 sec)
+
+mysql> show databases;
++---------------------+
+| Database            |
++---------------------+
+| demo                |
+| enterprisejavabatch |
+| information_schema  |
+| jrtp                |
+| mysql               |
+| octbatch            |
+| performance_schema  |
+| pwskills            |
+| pwskills_octbatch   |
+| sys                 |
++---------------------+
+
+2. Create a table in the database called pwskills_octbatch
+mysql> use pwskills_octbatch
+Database changed
+
+mysql> create table student(sid int,sname varchar(20),sage int,saddress varchar(20));
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> show tables;
++-----------------------------+
+| Tables_in_pwskills_octbatch |
++-----------------------------+
+| student                     |
++-----------------------------+
+
+3. insert the record to the table
+
+mysql> insert into student values(10,'sachin',51,'MI');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into student values(7,'dhoni',41,'CSK');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into student values(18,'kohli',36,'RCB');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into student values(45,'rohith',38,'MI');
+Query OK, 1 row affected (0.04 sec)
+
+4. Select all the records from the table
+mysql> select sid,sname,sage,saddress from student;
++------+--------+------+----------+
+| sid  | sname  | sage | saddress |
++------+--------+------+----------+
+|   10 | sachin |   51 | MI       |
+|    7 | dhoni  |   41 | CSK      |
+|   18 | kohli  |   36 | RCB      |
+|   45 | rohith |   38 | MI       |
++------+--------+------+----------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,531 @@
+enum
+ => group of named constants we use enum.
+ => Inside enum we can write
+	a. named constants[public static and final]
+	b. constructor
+	c. methods[static and instance]
+	d. variable[static and instance]
+ => For every enum there will be a parent enum called "java.lang.Enum".
+ => java.lang.Enum implements Serializable and Comparable interface.
+
+ 
+Enum w.r.t Inheritance
+++++++++++++++++++++++
+ => enum won't participate inheritance as enum is by default final.
+ => every named constants inside the enum represent an object of userdefined enum-type.
+ => enum can implement an interface,but not extends another enum.
+ => Constructor internally will be used by enum, but we can't use constructor to create an enum object.
+
+
+eg#1.
+enum EColor
+{
+	BLUE,GREEN,RED;
+	public void info(){
+		System.out.println("Universal Colour");
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		EColor[] colours =EColor.values();
+		for (EColor color:colours )
+		{
+			color.info();
+		}
+	}
+}
+Output
+Universal Colour
+Universal Colour
+Universal Colour
+
+eg#2.
+enum EColor
+{
+	BLUE,
+	RED{
+
+		public void info(){
+			System.out.println("Dangerous Colour");
+		}
+		
+	},GREEN;
+	public void info(){
+		System.out.println("Universal Colour");
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		EColor[] colours =EColor.values();
+		for (EColor color:colours )
+		{
+			color.info();
+		}
+	}
+}
+Output
+Universal Colour
+Dangerous Colour
+Universal Colour
+
+
+
+Annotations in java [JDK1.5V]
++++++++++++++++++++++++++++++
+ 1. Introduction
+ 2. Comments vs Annotations
+ 3. XML vs Annotations
+ 4. Types of Annotations
+ 5. Standard Annotations
+ 6. Custom Annotations
+
+What is the need of Annotations in java language?
+ => it is the features of jdk1.5V which is used to represent MetaData in java application.
+
+eg#1.
+	Test.java
+	+++++++++
+class Parent
+{
+	public void disp(){
+
+	}
+}
+class Child extends Parent
+{
+	//Overriding the disp() 
+	public void disp(){
+
+	}
+	
+}
+public class Test
+{
+	public static void main(String[] args){
+
+	}
+}
+Note: In Test.class file the comments would be removed so meta information won't be reaching to JVM(Runtime).
+
+Q> In java applications to describe metadata we have already comments then what is the requirement to go for Annotations?
+Ans. In java applications , if we provide metadata using "comments" then internally during compilation there is a phase 
+     called Lexical Analysis which would be done by "LexicalAnalyzer",where LexicalAnalyzer would remove the comments as a part of
+     "Compilation".
+     As a part of requirement if we want to bring metadata upto .java file,.class file and upto runtime of our applications then we
+     need to go for "Annotations".
+
+
+XML VS Annotations
+++++++++++++++++++
+ In java applications to provide metadata at runtime of java applications we can use xML Documents then what is the requirement
+ to go for "Annotations"?
+	refer: image file
+
+
+Syntax for Annotations
+++++++++++++++++++++++
+ @interface AnnotationName{
+	dataType memberName() [default] value;
+ }
+
+Keypoints
++++++++++
+ a. In java all anotations are by default "interfaces".
+ b. In java, the common and default super type for all the annotations is "java.lang.annotation.Annotation"
+ c. As per the no of members inside the annotaion, there are 3 types of annotations.
+
+      1. Marker Annotation: it is an annotation with out members
+		eg: @interface Override{}
+
+      2. Single-Valued Annotation : It is an annotation with exactly one member
+		eg: @interface SuppressWarnings{
+  			public  value();
+		    }
+
+      3. Multi-Valued Annotation : It is an annotation with more than one member.
+		eg:  @interface WebServlet{
+			int loadOnStartup();
+			String[] urlPatterns();
+		     }
+
+In java annotations are divided into following types as per there nature
+	a. Standard annotations
+	b. Custom Annotations
+
+Standard Annotations
+++++++++++++++++++++
+ These are predefined annotations provided along with java software
+ There are 2 types of standard annotations
+	1. General Purpose Annotations
+	2. Meta Annotations 
+
+
+1. General Purpose Annotations	
+	=> These are the annotations commonly used in java applications.
+	=> These annotations are part of "java.lang" package.
+		eg: @Override,@SuppressWarnings,@Deprecated,@FunctionalInterface
+
+
+@Deprecated
++++++++++++
+ => The main intention of this annotation is to make a method as deprecated and to provide deprecated message when we access
+	"Deprecated Method".
+ => Java has use this @Deprecated on few inbuilt methods of Pre-Defined class, if we have to give deprecated message for our
+    userdefined methods of Userdefined classes we go for "@Deprecated" annotation.
+
+ => It is a warning given by the compiler to indicate that these methods would no longer be supported in higher versions.
+
+eg#1.
+class Employee
+{
+	@Deprecated
+	public void generateSalary(int basic,float hra){
+		System.out.println("Salary is calculated on the basis of BasicAmount,HRA...");
+	}
+
+	public void generateSalary(int basic,float hra,int ta,float pf){
+		System.out.println("Salary is calculated on the basis of BasicAmount,HRA,TA,PF...");
+	}	
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		Employee emp = new Employee();
+		emp.generateSalary(25000,20.0f);
+	}
+}
+Output Compilation
+Note: D:\OctBatchMicroservices\Test.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+
+
+@SuppressWarning
+++++++++++++++++
+ => In java application, when we perform unchecked or unsafe operation the compiler will raise some warning messages.
+ => In this context to remove the compiler generated warning messages we need to keep @SuppressWarnings("unchecked") annotation.
+
+import java.util.ArrayList;
+import java.util.List;
+class Bank
+{
+	public ArrayList getCustomers(){
+		ArrayList al = new ArrayList();
+		al.add("sachin");
+		al.add("dhoni");
+		al.add("dravid");
+		al.add("kohli");
+		return al;
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		Bank b = new Bank();
+		List l = b.getCustomers();
+		System.out.println(l);
+	}
+}
+
+Output
+Note: D:\OctBatchMicroservices\Test.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+
+To remove this warning message from the compiler we use annotation called @SuppressWarnings
+
+eg#2
+import java.util.ArrayList;
+import java.util.List;
+class Bank
+{
+	@SuppressWarnings("unchecked")
+	public ArrayList getCustomers(){
+		ArrayList al = new ArrayList();
+		al.add("sachin");
+		al.add("dhoni");
+		al.add("dravid");
+		al.add("kohli");
+		return al;
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		Bank b = new Bank();
+		List l = b.getCustomers();
+		System.out.println(l);
+	}
+}
+
+Output
+[sachin, dhoni, dravid, kohli]
+
+
+2. Meta Annotations  
+	=> These annotations are used to define another annotations.
+	=> These annotations are part of "java.lang" package.
+		eg: @Inherited,@Documented,@Target,@Retention
+
+
+eg#1.
+@interface Persistable
+{
+}
+
+@Persistable //Object of that class can be saved in database
+class Employee
+{
+
+}
+class Manager extends Employee
+{
+
+}
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		//Can Manager object be Persitable
+		Manger m = new Manager();
+		
+	}
+}
+In the above code only Employee class is persitable,but not Manager class because the annotations behaviours are not inheritable
+by default.
+
+Solution
+++++++++
+@Inherited
+@interface Persistable
+{
+}
+
+@Persistable //Object of that class can be saved in database
+class Employee
+{
+
+}
+class Manager extends Employee
+{
+
+}
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		//Can Manager object be Persitable
+		Manger m = new Manager();
+		
+	}
+}
+Now both Employee and Manager class is "Persitable", as the annotation is marked "@Inherited".
+
+
+2. @Documented
+
+eg#1.
+@interface Persistable
+{
+
+}
+
+@Persistable //Object of that class can be saved in database
+public class Employee
+{
+	private Integer eid;
+	private String ename;
+
+	Employee(Integer eid,String ename){
+
+	}
+	public void dispEmployeeDetails(){
+
+	}
+}
+
+Upon generating the documentation of the code using javadoc Employee.java, in the index.html file the information about annotations
+will not be recorded.
+To record the information of the annotation also inside "index.html" page after generating the documentation we use an annotation
+called "@Documented"
+
+Solution
+++++++++
+import java.lang.annotation.*;
+
+@Documented
+@interface Persistable
+{
+
+}
+
+@Persistable //Object of that class can be saved in database
+public class Employee
+{
+	private Integer eid;
+	private String ename;
+
+	Employee(Integer eid,String ename){
+
+	}
+	public void dispEmployeeDetails(){
+
+	}
+}
+
+D:\OctBatchMicroservices>javadoc Employee.java
+Loading source file Employee.java...
+Constructing Javadoc information...
+Building index for all the packages and classes...
+Standard Doclet version 18.0.1.1+2-6
+Building tree for all the packages and classes...
+Generating .\Employee.html...
+Employee.java:10: warning: no comment
+public class Employee
+       ^
+Employee.java:18: warning: no comment
+        public void dispEmployeeDetails(){
+                    ^
+Generating .\package-summary.html...
+Generating .\package-tree.html...
+Generating .\overview-tree.html...
+Building index for all classes...
+Generating .\allclasses-index.html...
+Generating .\allpackages-index.html...
+Generating .\index-all.html...
+Generating .\index.html...
+Generating .\help-doc.html...
+2 warnings
+
+To see the output, open index.html and notice the information of annotation will be recorded.
+
+
+
+@Target
++++++++
+ => The main intention of this annotations is to define a list of target elements to which we are applying respective annotation.
+
+enum ElementType{
+	TYPE,METHOD,FIELD,CONSTRUCTOR,.....	
+}
+
+Type        -> class
+Field       -> Instance variables
+METHOD      -> Instance and static methods
+CONSTRUCTOR -> indicates constructor of a class
+
+eg#1.
+import java.lang.annotation.*;
+
+@Target(value = {ElementType.TYPE, 
+				 ElementType.FIELD,
+				 ElementType.CONSTRUCTOR,
+				 ElementType.METHOD}
+		)
+@interface Persistable
+{
+
+}
+
+@Persistable
+public class Employee
+{
+	@Persistable
+	Account account;
+
+	@Persistable
+	Employee(){
+
+	}
+
+	@Persistable
+	public void getEmployeeDetails(){
+
+	}
+}
+
+class Account
+{
+
+}
+
+
+@Retention
+++++++++++
+ The main intention of this annotation is to define the life time of repsective annotation in java appplication.
+
+enum RetentionPolicy{
+	SOURCE,CLASS,RUNTIME
+}
+
+eg#1.
+@Retention(RetentionPolicy.RUNTIME) //information of metadata will be availabe till Runtime(jvm)
+@interface Persistable
+{
+
+}
+
+@Persistable
+public class Employee
+{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+	
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

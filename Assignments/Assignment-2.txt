@@ -1,0 +1,52 @@
+Assignment No. 2 :
+
+Q. 1 : List the operators in java ?
+Ans : Java Supports various types of operators like 
+	Arithmetic,
+	Relational,
+	Logical,
+	bitwise,
+	assignment,
+	Assignment & Unary.
+
+Q. 2 : Explain about Increment and Decrement operators and give an examples ?
+Ans : java supports Increment and Decrement operators this operators are use to increase and decrease the value by 1 .
+
+Increment (++) adds 1 to the current value, and decrement (--) subtracts 1.
+
+Q. 3 : What are the Conditional Operators in Java ?
+Ans : Conditional operators include == (equal to), != (not equal to), < (less than), > (greater than), <= (less than or equal to), and >= (greater than or equal to).
+
+
+Q. 4 : What are the types of operators based on the number of operands?
+Ans : three types of operators in java based on the number of operands.
+	Unary operator
+	Binary operator
+	Ternary Operator
+
+Q. 5 : What are the conditional Statements and use of conditional statements in Java?
+ Ans :  Conditional statements (e.g., if, else, switch) help control the flow of a program based on specified conditions. They enable the execution of specific blocks of code depending on whether a condition is true or false.
+
+Q. 6 : What is the syntax of if else statement? 
+ Ans : 
+
+if (condition) {
+    // Code to be executed if the condition is true
+} else if {
+    // Code to be executed if the condition is true
+} else {
+    // Code to be executed if the condition is false
+}
+
+
+Q. 7 : What are the 3 types of iterative statements in java? 
+ Ans : Java has three main iterative statements: for, while, and do-while, allowing the execution of a block of code repeatedly based on a specified condition.
+
+Q. 8 : What do you mean by an Array? 
+ Ans : An array in Java is a data structure that stores elements of the same type in contiguous memory locations, identified by an index or a key.
+
+Q. 9 : How to create an Array? 
+ Ans : int[] myArray = new int[5]; // Creates an array with a size of 5
+
+Q. 10 : State the difference between StringBuffer and StringBuilder in Java. 
+ Ans : Both StringBuffer and StringBuilder are used to manipulate strings, but StringBuffer is thread-safe, synchronized, while StringBuilder is not. For performance-sensitive operations, StringBuilder is preferred, but if thread safety is crucial, StringBuffer is used despite the performance overhead.

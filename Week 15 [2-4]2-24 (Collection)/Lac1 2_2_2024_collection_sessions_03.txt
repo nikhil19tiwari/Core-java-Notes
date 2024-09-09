@@ -1,0 +1,575 @@
+interfaces
+++++++++++
+1. Collection
+2. List
+		
+3. Set		
+		Implementation :: HashSet,LinkedHaset
+4. SortedSet
+5. NavigableSet
+		Implementation :: TreeSet
+
+When to use Set(I) implementation class Objects?
+Ans. Duplicates are not allowed
+     Insertion Order is not preserved
+
+Note: To iterate any type of Collection object,the Collection Object should be "Iterable".
+      For Collection Interface the Parent interface is "Iterable".
+
+Note: Map(I) is not a part of Collection.
+
+6. Map(<K,V>)		
+		Implementation :: HashMap,WeakHashMap,IdentityHashMap
+				  Dictionary,Hashtable,Properties
+7. SortedMap
+8. NavigableMap
+		Implementation :: TreeMap
+
+9. Queue
+	Implementation class : BlockingQueue,PriorityBlockingQueue,...
+	
+When to use Queue(I) implementation class Objects?
+Ans. if we want to represent group of individual objects prior to processing then we should go for Queue.
+
+Name the cursors available for iterating the Collection Objects
+ a. Enumeration(I)
+ b. Iterator(I)
+ c. ListIterator(I)
+
+Name the interfaces available for Sorting the Objects
+ a. Comparable(I)
+ b. Comparator(I)
+
+List(I)
+ => Duplicates are allowed
+ => Insertion Order is preserved
+
+What are the implemenatation classes of List(I)?
+ Ans. ArrayList   :: It implements an interface called "Serializable, Cloneable,RandomAccess".
+		     Best suited if the operation is "retrieval Operation".
+			Constructors :: 3 constructors
+
+      LinkedList  :: It implements an interface called "Serializable, Cloneable"
+		     Best suited if the Operation is "insertion and deletion".
+			Constructors :: 2 constructors
+
+	Methods available to immitate Stack and Queue 
+		a. addFirst(Obj)
+		b. addLast(Obj)
+		c. getFirst()
+		d. getLast()		
+		e. removeFirst()
+		f. removeLast()
+
+       2 Legacy classes[JDK1.0V]
+		a. Vector  :: It implements an interface called "Serializable, Cloneable,RandomAccess".
+				Best suited if the operation is "retrieval Operation".
+				Constructors :: 4 constructors
+				Methods      :: synchronized
+
+		
+		b. Stack   ::It is specially designed class for LIFO order.
+				Constructors :: 1 constructors
+
+public class java.util.Stack<E> extends java.util.Vector<E> {
+  public java.util.Stack();
+  public E push(E);
+  public synchronized E pop();
+  public synchronized E peek();
+  public boolean empty();
+  public synchronized int search(java.lang.Object);
+}
+
+eg#1.
+
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		Stack s =new Stack();
+		System.out.println(s.empty());
+		s.push("A");
+		s.push("B");
+		s.push("C");
+		System.out.println(s);//[A,B,C]
+		System.out.println("Pop element is :: "+s.pop());
+		System.out.println(s.empty());
+
+		System.out.println(s.search("Z"));//-1
+		System.out.println(s.search("A"));//3
+
+	}
+}
+
+Output
+true
+[A, B, C]
+Pop element is :: C
+false
+-1
+2
+
+The 3 Cursors of Java:
+=> If we want to get Objects One by One from the Collection then we should go for Cursors.
+=> There are 3 Types of Cursors Available in Java.
+	1) Enumeration
+	2) Iterator
+	3) ListIterator
+
+1) Enumeration:
+	We can Use Enumeration to get Objects One by One from the Collection.
+	We can Create Enumeration Object by using elements().
+	public Enumeration elements();
+	Eg:Enumeration e = v.elements(); //v is Vector Object.
+Methods:
+1) public boolean hasMoreElements();
+2) public Object  nextElement();
+
+eg#1.
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		//Legacy Object
+		Vector v = new Vector();
+		for (int i =0;i<=10 ;i++ )
+		{
+			v.add(i);
+		}
+		System.out.println(v);//[0,1,2,3,4,5,6,7,8,9,10]
+
+		System.out.println("Iterating through Cursors");
+
+		//Legacy Cursor
+		Enumeration e = v.elements();
+		while (e.hasMoreElements())
+		{
+			Integer obj =(Integer)(e.nextElement());
+			if (obj%2==0)
+				System.out.println(obj);//[0,2,4,6,8,10]
+		}
+		System.out.println(v);//[0,1,2,3,4,5,6,7,8,9,10]
+	}
+}
+
+
+Limitations of Enumeration:
+=> Enumeration Concept is Applicable Only for Legacy Classes and it is Not a Universal  Cursor.
+=> By using Enumeration we can Perform Read Operation and we can't Perform Remove Operation.
+
+To Overcome Above Limitations we should go for Iterator.
+
+
+2) Iterator:
+ => We can Use Iterator to get Objects One by One from Collection.
+ => We can Apply Iterator Concept for any Collection Object. Hence it is Universal Cursor.
+ => By using Iterator we can Able to Perform Both Read and Remove Operations.
+ => We can Create Iterator Object by using iterator() of Collection Interface.
+		public Iterator iterator();
+	Eg:Iterator itr = c.iterator(); //c Means any Collection Object.
+
+Methods:
+1) public booleanhasNext()
+2) public Object next()
+3) public void remove()//Extra method given by Iterator interface
+
+
+eg#2.
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		ArrayList al = new ArrayList();
+		for (int i =0;i<=10 ;i++ )
+		{
+			al.add(i);
+		}
+		System.out.println(al);//[0,1,2,3,4,5,6,7,8,9,10]
+
+		System.out.println();
+
+		//Getting iterator obj
+		Iterator itr = al.iterator();
+		while (itr.hasNext())
+		{
+			Integer i = (Integer)(itr.next());
+			if (i%2==0)
+			{
+				//Perform read operation
+				System.out.println(i);//[0,2,4,6,8,10]
+			}
+			else
+			{
+				//Perform delete operation
+				itr.remove();
+			}
+		}
+
+		System.out.println(al);//[0,2,4,6,8,10]
+
+	}
+}
+
+Output
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+0
+2
+4
+6
+8
+10
+
+[0, 2, 4, 6, 8, 10]
+
+Limitations:
+=> By using Enumeration and Iterator we can Move Only towards Forward Direction and we 
+   can’t Move Backward Direction. That is these are Single Direction Cursors but NotBiDirection.
+=> By using Iterator we can Perform Only Read and Remove Operations and we can't Perform 
+   Addition of New Objects and Replacing Existing Objects.
+
+To Overcome these Limitations we should go for ListIterator.
+
+3) ListIterator:
+ => ListIterator is the Child Interface of Iterator.
+ => By using ListIterator we can Move Either to the Forward Direction OR to the 
+    Backward Direction. That is it is a Bi-Directional Cursor.
+ => By using ListIterator we can Able to Perform Addition of New Objects andReplacing 
+    existing Objects. In Addition to Read and Remove Operations.
+ => We can Create ListIterator Object by using listIterator().
+	public ListIteratorlistIterator();
+	Eg:ListIteratorltr = l.listIterator(); //l is Any List Object
+Methods:
+=> ListIteratoris the Child Interface of Iterator and Hence All Iterator Methods by Default 
+   Available to the ListIterator.		
+			Iterator(I)
+			  |
+			  |
+		      ListIterator(I)
+
+ListIteratorDefines the following 9 Methods.
+	public boolean hasNext()
+	public Object next()
+	public int nextIndex()
+
+	public boolean hasPrevious()
+	public Object previous()
+	public int previousIndex()
+
+	public void remove()
+	public void set(Object new)
+	public void add(Object new)
+
+eg#1.
+import java.util.*;
+public class Test
+{
+	public static void main(String[] args)
+	{
+		LinkedList ll = new LinkedList();
+		ll.add("sachin");
+		ll.add("saurav");
+		ll.add("dhoni");
+		ll.add("kohli");
+		ll.add("dravid");
+
+		System.out.println(ll);//["sachin","saurav","dhoni","kohli","dravid"]
+
+		//Getting ListIterator:: Powerful cursor
+		ListIterator litr = ll.listIterator();
+		while(litr.hasNext())
+		{
+			//Performing read operation
+			String name = (String)(litr.next());
+			if (name.equals("dravid"))
+			{
+				//peforming remove operation
+				litr.remove();
+			}
+			if (name.equals("sachin"))
+			{
+				//performing update operation
+				litr.set("sachintendulkar");
+			}
+			if (name.equals("dhoni"))
+			{
+				//performing add operation
+				litr.add("sakshi");
+			}
+		}
+		System.out.println(ll);
+		//[sachintendulkar, saurav, dhoni, sakshi, kohli]
+	}
+}
+Output
+[sachin, saurav, dhoni, kohli, dravid]
+[sachintendulkar, saurav, dhoni, sakshi, kohli]
+
+
+Note:
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		LinkedList ll = new LinkedList();
+		ll.add("sachin");
+		ll.add("saurav");
+		ll.add("dhoni");
+		ll.add("kohli");
+		ll.add("dravid");
+
+		System.out.println(ll);//["sachin","saurav","dhoni","kohli","dravid"]
+
+		//foreach loop to iterate the Object
+		for(Object name : ll)
+		{
+			System.out.println(name);//sachin saurav dhoni kohli dravid
+		}
+
+		//Iterators to iterate the Object
+		while(itr.hasNext()){
+			System.out.println(itr.next());//sachin saurav dhoni kohli dravid
+		}
+	}
+}
+
+Note:
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+				 Vector v = new Vector();
+
+		Enumeration e     = v.elements();
+		System.out.println("Enumeration  :: "+e.getClass().getName());
+
+		Iterator itr      = v.iterator();
+		System.out.println("Iterator     :: "+itr.getClass().getName());
+
+		ListIterator litr = v.listIterator();
+		System.out.println("ListIterator :: "+litr.getClass().getName());
+
+	}
+}
+
+Enumeration  :: java.util.Vector$1
+Iterator     :: java.util.Vector$Itr
+ListIterator :: java.util.Vector$ListItr
+
+Set:
+=> It is the Child Interface of Collection.
+=> If we want to Represent a Group of Individual Objects as a Single Entity where 
+   Duplicates are Not allowed and Insertion Order is Not Preserved then we should go for Set.
+=> Set Interface doesn't contain any new Methods and Hence we have to Use Only Collection Interface Methods.
+
+HashSet
+=======
+1. Duplicates are not allowed,if we try to add it would not throw any error rather it would
+   return false.
+2. Internal DataStructure: Hashtable
+3. null insertion is possible.
+4. heterogenous data elements can be added.
+5. If our frequent operation is search, then the best choice is HashSet.
+6. It implements Serializable,Cloneable, but not random access.
+
+Constructors
+==========
+ HashSet s=new HashSet(); Default initial capacity is 16
+  	Default FillRation/load factor is 0.75
+
+ Note: In case of ArrayList, default capacity is 10, after filling the complete capacity then new ArrayList would be created.
+
+ In case of HashSet, after filling 75% of the ratio only new HashSet will be created.
+
+ HashSet s=new HashSet(int intialiCapacity);//specified capacity with default fill ration=0.75
+ HashSet s=new HashSet(int initaliCapacity,float fillRatio)
+ HashSet s=new HashSet(Collection c);
+
+LoadFactor
+=========
+ After loading how much ratio,a new object will be created is called as "LoadFactor".
+
+eg#1.
+import java.util.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		//Underlying datastructure is Hashtable
+		//JDK1.2 Version
+		HashSet hs = new HashSet();
+		hs.add("A");
+		hs.add("B");
+		hs.add("C");
+		hs.add("D");
+		hs.add("A");
+		hs.add(null);
+		System.out.println(hs);//[null, A, B, C, D]
+
+		System.out.println();
+
+		//Underlying DataStructure :: Hashtable + LinkedList
+		//JDK1.4 Version
+		LinkedHashSet lhs = new LinkedHashSet();
+		lhs.add("A");
+		lhs.add("B");
+		lhs.add("Z");
+		lhs.add("C");
+		lhs.add(10);
+		System.out.println(lhs);
+	}
+}
+
+LinkedHashSet
+=============
+It is the child class of "HashSet".
+DataStructure: Hashtable + linkedlist
+duplicates   : not allowed
+insertion order: preserved
+null allowed   : yes
+
+All the constructors and methods which are a part of HashSet will be a part of "LinkedHashSet",but except "insertion order will be preserved".
+
+Difference b/w HashSet and LinkedHashSet
+++++++++++++++++++++++++++++++++++++++++
+HashSet       => underlying datastructure is "HasTable"
+LinkedHashSet => underlying datastructure is combination of "Hashtable + "linkedlist" .
+
+HashSet       => Duplicates are not allowed and insertion order is not preserved
+LinkedHashSet => Duplicates are not allowed,but insertion order is preserved.
+
+HashSet       => 1.2V
+LinkedHashSet => 1.4v 
+
+Note: insertion order is preserved, but duplicates are not allowed.
+Whenever we want to develp cache based application,where duplicates are not allowed insertion
+order must be preserved then we go for "LinkedHashSet".
+
+SortedSet(I)
+===========
+ It is the child interface of Set
+ Group of individual objects, where duplicates are not allowed,but the elements should be
+ sorted in some order.
+	eg: {3,2,1} 
+	    {1,2,3}
+	    {3,1,2}
+	    {2,1,3}
+ 
+Some specific methods w.r.t SortedSet are
+ a. Object firstElement() => returns first element
+ b. Object lastElement()  => returns last  element
+ c. SortedSet headSet(Object obj)=> returns sortedset whose elements are < obj
+ d. SortedSet tailSet(Object obj)=> returns sortedset whose elements are >=obj
+ e. SortedSet subSet(Object obj1,Object obj2)=> returns subset whose elements are >=obj1 and <obj2
+ f. Compartor compartor() => returns Comparotor object that describes underlying sorting technique
+                             default natural sorting order means it returns null.
+
+Note:: 
+ String Object => default natural sorting order is Alphabetical order[A to Z]
+ Number Object => default natural sorting order is Ascending order.[0 to 9]
+
+SortedSet 
+  100 101 102 103 104 105 106 107
+  firstElement()  => 100
+  lastEleemnt()   => 107
+  headSet(104)    => 100 101 102 103
+  tailSet(105)    => 105,106,107
+  subset(101,104) => 101,102,103
+  compartor()     => null
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

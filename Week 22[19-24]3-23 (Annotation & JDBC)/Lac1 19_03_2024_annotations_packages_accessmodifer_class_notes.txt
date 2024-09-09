@@ -1,0 +1,264 @@
+Syntax to declare a annotation
+++++++++++++++++++++++++++++++
+ @interface AnnotationName{
+	dataType memberName() [default] Value;
+ }
+
+Syntax to use Annotation
+++++++++++++++++++++++++
+ @Annotation(memberName1 = value1,memberName1=value2,...)
+
+As per the no of members available, we have 3 types of annotations
+ a. MarkerAnnotations        :: @Override
+ b. SingleValued Annotation  :: @SuppressWarnings
+ c. Multivalued  Annotation  :: @WebServlet
+
+In java annotations are divided into 2 types as per there nature
+	a. Standard annotation
+		1. General Purpose Annotations :: @Override,@Deprecated,@SuppressWarnings,@FunctionalInterface
+		2. Meta  Annotations           :: @Inherited,@Documented,@Target,@Retention 
+
+
+Note: @Target 
+       We use enum called "ElementType"
+		enum ElementType{
+			TYPE,METHOD,FIELD,CONSTRUCTOR
+                }
+
+
+      @Retention
+	we use enum called "RetentionPolicy"
+		enum RetentionPolicy{
+			SOURCE,CLASS,RUNTIME;
+		}
+
+
+	 
+	b. Custom annotation
+		These are the annotations defined by the developers as per application requirements.
+
+Steps followed to create custom annotations
++++++++++++++++++++++++++++++++++++++++++++
+1. Declare UserDefined Annoations.
+
+@Inherited
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@interface Bank{
+	String name()   default "ICICI BANK";
+	String branch() default "MG ROAD";
+	String phone()  default "080-2381323";
+}
+
+2. Utilise the UserDefined Annotations in java application
+
+@Bank(branch="BTM Layout",phone = "080-22334433")
+class Account
+{
+	String accNo;
+	String accType;
+	String accName;
+
+	Account(String accNo,String accType,String accName){
+		this.accNo   = accNo;
+		this.accType = accType;
+		this.accName = accName;
+	}	
+
+	public void getAccountDetails(){
+		System.out.println("*****Account Details****");
+		System.out.println("ACCNO   :: "+accNo);
+		System.out.println("ACCTYPE :: "+accType);
+		System.out.println("ACCNAME :: "+accName);
+	}
+}
+
+
+3. Access the data from UserDefinedAnnoation in main application
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		Account account = new Account("ICICI-1234","savings","sachin");
+		account.getAccountDetails();
+
+		System.out.println();
+
+		System.out.println("****Bank Details****");
+		Class c = account.getClass();
+		Annotation annotation = c.getAnnotation(Bank.class);
+		Bank bank =(Bank)annotation;
+		System.out.println("BankName   :: "+bank.name());
+		System.out.println("BranchName :: "+bank.branch());
+		System.out.println("PhoneNo    :: "+bank.phone());
+	}
+}
+Output
+*****Account Details****
+ACCNO   :: ICICI-1234
+ACCTYPE :: savings
+ACCNAME :: sachin
+
+****Bank Details****
+BankName   :: ICICI BANK
+BranchName :: BTM Layout
+PhoneNo    :: 080-22334433
+
+
+working with custom annotation at method level
+++++++++++++++++++++++++++++++++++++++++++++++
+1. Declare UserDefined Annoations.
+
+@Inherited
+@Documented
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@interface Course{
+	String cid() default "C-111";
+	String cname() default "CoreJava";
+	int cost() default 5000;
+}
+
+2. Utilise the UserDefined Annotations in java application
+
+class Student
+{
+	String sid;
+	String sname;
+	String saddress;
+
+	Student(String sid,String sname,String saddress){
+		this.sid      = sid;
+		this.sname    = sname;
+		this.saddress = saddress;
+	}
+	
+	@Course(cid="C-222",cname="Frameworks")
+	public void getStudentDetails(){
+		System.out.println("****Student Details****");
+		System.out.println("SID   :: "+sid);
+		System.out.println("SNAME :: "+sname);
+		System.out.println("SADDR :: "+saddress);
+	}
+}
+
+
+3. Access the data from UserDefinedAnnoation in main application
+
+public class Test
+{
+	public static void main(String[] args)throws Exception
+	{
+		Student student = new Student("S-111","sachin","MI");
+		student.getStudentDetails();
+
+		System.out.println();
+		System.out.println("****CourseDetails****");
+
+		Class c = student.getClass();
+		Method method = c.getMethod("getStudentDetails");
+		Course course =(Course)method.getAnnotation(Course.class);
+		System.out.println("CID   :: "+course.cid());
+		System.out.println("CNAME :: "+course.cname());
+		System.out.println("COST  :: "+course.cost());
+
+	}
+}
+
+Output
+****Student Details****
+SID   :: S-111
+SNAME :: sachin
+SADDR :: MI
+
+****CourseDetails****
+CID   :: C-222
+CNAME :: Frameworks
+COST  :: 5000
+
+
+
+Packages and accessmodifers
++++++++++++++++++++++++++++
+
+Pre-Defined packages 
+ => Grouping of all related .class files in a folder is refered as "packaging".
+ => By packages we can identify the classes easily, so it can be imported to our java program in a easy manner.
+ => Favourite package for all java learners is "java.lang.*" because we need not import these .class to our java program.
+
+
+eg: java.io.*
+    java.lang.*
+    java.sql.*
+    java.util.*
+    java.lang.reflect.*
+    java.lang.annotation.*
+    java.awt.*
+
+We can specify the classname in fully qualifed style as shown below.
+
+public class Test
+{
+	public static void main(String[] args){
+		//Specifying the classnames through "FullyQualified names"
+		java.util.Date d = new java.util.Date();
+		System.out.println(d);
+
+		d = new Date();
+		System.out.println(d);
+	}
+}
+
+The limitation w.r.t fully qualified classname is compiler will know the information about the class only in that line,we can't use those
+without fully qualified name in the other lines of the same java program.
+The above approaches increases the length of the code and decrease the readiblity so writing the fullyqualified names is not suited in realtime.
+
+Solution : use import keyword to import the .class files to our java code.
+
+There are 2 types of import statements
+ a. Explicit import
+	=> import java.util.Date;
+	=> This type of import is bestsuited as it improves the readability of the code.
+
+ b. Implicit import
+	=> import java.util.*;
+	=> This type of import is not bestsuited as it reduces the readability of the code.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+

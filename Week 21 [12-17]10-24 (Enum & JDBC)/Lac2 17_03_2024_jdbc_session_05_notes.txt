@@ -1,0 +1,438 @@
+1. Working with Statement Object
+2. Working with PreparedStatement Object(CRUD,Date,Image,Text)
+3. Transfer of data from Oracle to MySQLDB
+
+Steps followed to connect with database
++++++++++++++++++++++++++++++++++++++++
+1. Load and register the driver(Autoloading: JDBC4.X)
+2. Establish the connection b/w java application and database.
+3. Create Statement/PreparedStatement to trasfer the query from Java to Database.
+4. Execute the Query.
+5. Process the result(SelectQuery :: ResultSet, NonSelectQuery: int)
+5. Close the resources.
+
+SQLInjection
+++++++++++++
+a. Using Statement Object
+
+package com.pwskills.nitin;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+import com.pwksills.utility.JdbcUtil;
+
+public class SQLInjectionUsingStatement {
+
+	public static void main(String[] args) {
+
+		Scanner scanner = new Scanner(System.in);
+
+		try (Connection connection = JdbcUtil.getOracleDBConection()) {
+
+			try (Statement statement = connection.createStatement()) {
+
+				System.out.print("Enter the username :: ");
+				String username = scanner.next();
+				username = "'" + username + "'";
+
+				System.out.print("Enter the password :: ");
+				String password = scanner.next();
+				password = "'" + password + "'";
+
+				String sqlSelectQuery = "select count(*) from users where name=" + username + " and password="
+						+ password + " ";
+				
+				System.out.println(sqlSelectQuery);
+
+				try (ResultSet resultSet = statement.executeQuery(sqlSelectQuery)) {
+					
+					int count = 0;
+					if (resultSet.next()) {
+							count = resultSet.getInt(1);
+					} 
+					
+					if (count==1) {
+						System.out.println("Valid credentials.....");
+					} else {
+						System.out.println("Invalid credentials....");
+					}
+				}
+			}
+		} catch (SQLException se) {
+			se.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		scanner.close();
+	}
+
+}
+
+
+Output
+Enter the username :: sachin
+Enter the password :: tendulkar
+select count(*) from users where name='sachin' and password='tendulkar' 
+Valid credentials.....
+
+
+Output
+Enter the username :: sachin'--
+Enter the password :: rahul
+select count(*) from users where name='sachin'--' and password='rahul' 
+Valid credentials.....
+
+
+b. Using PreparedStatement
+
+package com.pwskills.nitin;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import com.pwksills.utility.JdbcUtil;
+
+public class SQLInjectionUsingPrepardStatement {
+
+	private static final String SQL_SELECT_QUERY = "select count(*) from users where name=? and password = ?";
+
+	public static void main(String[] args) {
+
+		Scanner scanner = new Scanner(System.in);
+
+		try (Connection connection = JdbcUtil.getOracleDBConection()) {
+
+			try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_QUERY)) {
+
+				System.out.print("Enter the username :: ");
+				String username = scanner.next();
+
+				System.out.print("Enter the password :: ");
+				String password = scanner.next();
+
+				// Set the values to ? placeholder(trying to perform SQLINJECTION)
+				preparedStatement.setString(1, username);
+				preparedStatement.setString(2, password);
+
+				System.out.println(SQL_SELECT_QUERY);
+				
+				try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+					int count = 0;
+					if (resultSet.next()) {
+						count = resultSet.getInt(1);
+					}
+
+					if (count == 1) {
+						System.out.println("Valid credentials.....");
+					} else {
+						System.out.println("Invalid credentials....");
+					}
+				}
+			}
+		} catch (SQLException se) {
+			se.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		scanner.close();
+	}
+
+}
+
+
+Output
+Enter the username :: sachin
+Enter the password :: tendulkar
+select count(*) from users where name=? and password = ?
+Valid credentials.....
+
+
+Output
+Enter the username :: sachin'--
+Enter the password :: dravid
+select count(*) from users where name=? and password = ?
+Invalid credentials....
+
+StoredProcedure in MySQL
++++++++++++++++++++++++
+
+
+GET_PRODUCT_DETAILS_BY_PID
+++++++++++++++++++++++++++
+DELIMITER $$
+
+USE `pwskills_octbatch`$$
+
+DROP PROCEDURE IF EXISTS `GET_PRODUCT_DETAILS_BY_PID`$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GET_PRODUCT_DETAILS_BY_PID`( 
+				    IN id INT, 
+				    OUT prodName VARCHAR(20),
+				    OUT rate FLOAT, 
+                                    OUT qnt INT)
+BEGIN
+	SELECT pname,price,quantity 
+		INTO prodName,rate,qnt
+		FROM
+			products
+				WHERE pid = id;
+END$$
+
+DELIMITER ;
+
+2. Calling storedprocedure
+	CALL `GET_PRODUCT_DETAILS_BY_PID`(2,@pname,@price,@qty);
+
+
+package com.pwskills.nitin;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Scanner;
+import com.pwksills.utility.JdbcUtil;
+
+/*
+ * 
+DELIMITER $$
+
+USE `pwskills_octbatch`$$
+
+DROP PROCEDURE IF EXISTS `GET_PRODUCT_DETAILS_BY_PID`$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GET_PRODUCT_DETAILS_BY_PID`( 
+									IN id INT, 
+									
+									OUT prodName VARCHAR(20),
+									OUT rate FLOAT, 
+                                    OUT qnt INT)
+BEGIN
+		SELECT pname,price,quantity 
+		       INTO prodName,rate,qnt
+			FROM
+			  products
+				WHERE pid = id;
+	END$$
+
+DELIMITER ;
+
+ * 
+ * 
+ */
+
+public class StoredProcedureApp {
+
+	private static final String CALL_PROCEDURE_QUERY = "{call GET_PRODUCT_DETAILS_BY_PID(?,?,?,?)}";
+
+	public static void main(String[] args) {
+
+		Scanner scanner = new Scanner(System.in);
+		int id = 0;
+		if (scanner != null) {
+			System.out.print("Enter the id of the product to be displayed:: ");
+			id = scanner.nextInt();
+		}
+
+		try (Connection connection = JdbcUtil.getMySQLDBConection()) {
+			System.out.println(connection);
+
+			try (CallableStatement cst = connection.prepareCall(CALL_PROCEDURE_QUERY)) {
+
+				// Setting the IN parameter value
+				cst.setInt(1, id);
+				System.out.println(cst);
+
+				// Registering the OUT Parameter value
+				cst.registerOutParameter(2, Types.VARCHAR);
+				cst.registerOutParameter(3, Types.FLOAT);
+				cst.registerOutParameter(4, Types.INTEGER);
+
+				// running the StoredProcedure
+				cst.execute();
+
+				System.out.println(cst);
+
+				// Getting the results from OUT Params
+				System.out.println("PNAME :: " + cst.getString(2));
+				System.out.println("PRICE :: " + cst.getFloat(3));
+				System.out.println("QTY   :: " + cst.getInt(4));
+
+			}
+		} catch (SQLException se) {
+			se.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		scanner.close();
+	}
+}
+Output
+Enter the id of the product to be displayed:: 1
+PNAME :: fossil
+PRICE :: 25000.0
+QTY   :: 3
+
+Retreiving the records based on name
+++++++++++++++++++++++++++++++++++++
+Step1: Create a Storedprocedure to retrieve all the records with a particular name.
+
+DELIMITER $$
+
+CREATE
+    PROCEDURE `pwskills_octbatch`.`GET_PRODUCT_DETAILS_BY_NAME`(
+			IN name1 VARCHAR(20),
+			IN name2 VARCHAR(20))
+    
+	BEGIN
+	   SELECT pid,pname,price,quantity
+	       FROM
+	          products
+	            WHERE pname IN (name1,name2);
+
+	END$$
+
+DELIMITER ;
+
+Step2: CALL `GET_PRODUCT_DETAILS_BY_NAME`('fossil','armani');
+package com.pwskills.nitin;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import com.pwksills.utility.JdbcUtil;
+
+/*
+ * 
+
+Step1: Create a Storedprocedure to retrieve all the records with a particular name.
+
+DELIMITER $$
+
+CREATE
+    PROCEDURE `pwskills_octbatch`.`GET_PRODUCT_DETAILS_BY_NAME`
+   		(
+			IN name1 VARCHAR(20),
+			IN name2 VARCHAR(20)
+		)
+    
+	BEGIN
+	   SELECT pid,pname,price,quantity
+	       FROM
+	          products
+	            WHERE pname IN (name1,name2);
+
+	END$$
+
+DELIMITER ;
+
+Step2: CALL `GET_PRODUCT_DETAILS_BY_NAME`('fossil','armani');
+
+ * 
+ * 
+ * 
+ */
+
+public class StoredProcedureApp02 {
+
+	private static final String CALL_PROCEDURE_QUERY = "{call GET_PRODUCT_DETAILS_BY_NAME(?,?)}";
+
+	public static void main(String[] args) {
+
+		Scanner scanner = new Scanner(System.in);
+		String prodName1 = null;
+		String prodName2 = null;
+		boolean flag = false;
+
+		if (scanner != null) {
+			System.out.print("Enter the name of the first Product:: ");
+			prodName1 = scanner.next();
+
+			System.out.print("Enter the name of the second Product:: ");
+			prodName2 = scanner.next();
+
+		}
+
+		try (Connection connection = JdbcUtil.getMySQLDBConection()) {
+			System.out.println(connection);
+
+			try (CallableStatement cst = connection.prepareCall(CALL_PROCEDURE_QUERY)) {
+
+				// Setting the IN parameter value
+				cst.setString(1, prodName1);
+				cst.setString(2, prodName2);
+				System.out.println(cst);
+
+				// running the StoredProcedure
+				cst.execute();
+
+				// Getting the result from CallableStatement
+				try (ResultSet resultSet = cst.getResultSet()) {
+					System.out.println("PID\tPNAME\tPRICE\tQTY");
+					while (resultSet.next()) {
+						System.out.print(resultSet.getInt(1) + "\t" + resultSet.getString(2) + "\t"
+								+ resultSet.getFloat(3) + "\t" + resultSet.getInt(4));
+						flag = true;
+						System.out.println();
+					}
+					if (flag) {
+						System.out.println("Record found and displayed....");
+					} else {
+						System.out.println("Record not available to display...");
+					}
+				}
+			}
+		} catch (SQLException se) {
+			se.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		scanner.close();
+	}
+}
+
+Output
+Enter the name of the first Product:: fastrack
+Enter the name of the second Product:: hmt
+com.mysql.cj.jdbc.ConnectionImpl@60410cd
+com.mysql.cj.jdbc.CallableStatement: CALL GET_PRODUCT_DETAILS_BY_NAME('fastrack','hmt')
+PID	PNAME	PRICE	QTY
+Record not available to display...
+
+Output
+Enter the name of the first Product:: omegha
+Enter the name of the second Product:: tissot
+com.mysql.cj.jdbc.ConnectionImpl@60410cd
+com.mysql.cj.jdbc.CallableStatement: CALL GET_PRODUCT_DETAILS_BY_NAME('omegha','tissot')
+PID	PNAME	PRICE	QTY
+3	tissot	23000.0	5
+4	omegha	50000.0	2
+Record found and displayed....
+
+
+
+Extra class
++++++++++++
+Tuesday     : Custom Annotations, Packages, Accessmodifiers,Creation of userdefined jars.
+Wednesday   : 7.30 to 10.30PM(JDBC will get over)
+Thursday    : 7.30 to 10.30PM(introduction to webapplications)
+
+
+
+
+
+
+
+
+

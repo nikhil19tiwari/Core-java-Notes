@@ -1,0 +1,313 @@
+Import statements
++++++++++++++++++
+ a. using fully qualified name
+ b. using implicit import
+ c. using explicit import
+
+Note: import keyword is compile time concept, more the import keyword more would be the time taken for compilation.
+
+JDK1.5Features
+++++++++++++++
+ a. foreach
+ b. var-args
+ c. queue
+ d. Generics
+ e. AutoBoxing and AutoUnBoxing
+ f. Co-Varient return types
+ g. Annotations
+ h. enum
+ i. static import
+ j. StringBuilder
+
+Working with normal import
+++++++++++++++++++++++++++
+import java.lang.Math;
+public class Test
+{
+	public static void main(String[] args){
+		System.out.println(Math.sqrt(100));
+		System.out.println(Math.max(10,20));
+		System.out.println(Math.random());	
+	}
+}
+output
+10.0
+20
+0.3241449497992278
+
+Note: 
+Normal import
+  import java.lang.*;
+		   |-> .class files under current package
+
+static import
+  import static java.lang.Math.*
+			       |-> static methods,static variables...... in a particular class
+
+eg#2
+import static java.lang.Math.sqrt;
+import static java.lang.Math.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		System.out.println(sqrt(100));
+		System.out.println(max(10,20));
+		System.out.println(random());	
+	}
+}
+Output
+10.0
+20
+0.19424722896223667
+
+
+eg#3.
+import java.lang.*;
+public class Test
+{
+	public static void main(String[] args)
+	{
+		System.out.println("Hello pwskills team....");	
+	}
+}
+Output
+Hello pwskills team....
+
+eg#4.
+import static java.lang.System.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		out.println("Hello pwskills team....");	
+	}
+}
+Output
+Hello pwskills team....
+
+eg#5.
+import static java.lang.System.*;
+import java.lang.Byte;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		out.println("Hello pwskills team....");
+		out.println(Byte.MIN_VALUE);
+		out.println(Byte.MAX_VALUE);
+	}
+}
+Output
+Hello pwskills team....
+-128
+127
+
+eg#6.
+import static java.lang.System.*;
+import static java.lang.Byte.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		out.println("Hello pwskills team....");
+		out.println(MIN_VALUE);
+		out.println(MAX_VALUE);
+	}
+}
+Output
+Hello pwskills team....
+-128
+127
+
+eg#7.
+import static java.lang.System.*;
+import static java.lang.Byte.*;
+import static java.lang.Integer.*;
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		out.println("Hello pwskills team....");
+		out.println(MIN_VALUE);
+		out.println(MAX_VALUE);
+	}
+}
+Output
+ CE: ambiguity
+
+eg#8.
+While resolving static members compiler will give precedence in the following order
+	a. Current class static member
+	b. Explicit static import
+	c. Implicit static import
+
+import static java.lang.System.*;
+import static java.lang.Byte.*;//Implicit static import
+import static java.lang.Integer.MIN_VALUE;//Explicit static import
+
+public class Test
+{
+	static int MIN_VALUE = 0;
+	public static void main(String[] args)
+	{
+		out.println("Hello pwskills team....");
+		out.println(MIN_VALUE);
+	}
+}
+
+Note: Two packages containing same classname or interfacename is very very rare, so ambiguity problem won't occur in "Normal import".
+      Two classes or interfaces containing the same static variable, static methods is very common, so ambiguity problem coming
+      in "static import" is also common.
+
+
+Working with packages
++++++++++++++++++++++
+ writing the packagename is to reverse the order of domain name
+	eg: www.pwskills.com
+	
+ package name :: com.pwskills.nitin.controller
+		 com.pwskills.nitin.service
+		 com.pwskills.nitin.repository
+		 com.pwskills.nitin.dto
+		 com.pwskills.nitin.bo
+		 com.pwskills.nitin.vo
+
+
+eg#1.
+package com.pwskills.nitin.main;
+public class Test
+{
+	public static void main(String[] args)
+	{
+		System.out.println("Packages concept...");
+	}
+}
+D:\OctBatchMicroservices>java Test.java
+It creates a .class file called Test.class but won't create package specified in the source code
+
+If we want the package to be created and in that package if the .class file has to be saved then we need to use
+D:\OctBatchMicroservices>javac -d . Test.java
+Output:: It creates a folder called com/pwskills/nitin/main/Test.class
+At the time of execution compulsory we need to give fully qualified name.
+
+D:\OctBatchMicroservices>java com.pwskills.nitin.main.Test
+Packages concept...
+
+standard source code file structure
++++++++++++++++++++++++++++++++++++
+ package ....// only one statement
+ import  ....// explicit import(as decided by programmer)
+
+ class/enum/interface   ...(any no, but only one class should be marked as public)
+
+
+Access modifiers
+++++++++++++++++
+a. public 
+b. private
+c. protected
+d. static
+e. synchronized
+f. strictfp
+g. final
+h. abstract
+i. volatile
+j. native
+k. transient
+
+
+//Commonly occured Exceptions in java
+	a. ClassNotFoundException
+	b. NoClassDefFoundError
+
+strictfp
+++++++++
+ This access modifer represents "Strict FlotingPoint Precession".
+ It deals with working with "Floating point calculations".
+ Applicable at 
+ classlevel    :: yes
+ methodlevel   :: yes
+ variablelevel :: no
+ 
+package com.pwskills.nitin.main;
+public class Test
+{
+	//Java -> WORA
+	public strictfp static void main(String[] args)
+	{
+		//Output decided by CPU
+		//32bit cpu -> 3.33333333---> JVM(unique)
+		//64bit cpu -> 3.33434343---> JVM(unique)
+		System.out.println(10.0/3);
+	}
+}
+Output
+D:\OctBatchMicroservices>java com.pwskills.nitin.main.Test
+3.3333333333333335
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

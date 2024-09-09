@@ -1,0 +1,521 @@
+final 
+  a. method	=> it can't be overriden in child class.
+  b. class	=> class won't participate in inheritance.
+  c. variable	=> It would be treated like CompileTimeConstant,whose value should not be changed
+		   in the application.(compiler replace the variable with value)
+
+
+In java application to declare constant variables, java has provided a standard convention
+	"public static final"
+
+eg#1.
+System class
+++++++++++++
+public static final InputStream in;
+public static final PrintStream out;
+public static final PrintStream err;
+
+eg#2.
+Thread class
+++++++++++++
+public static final int MIN_PRIORITY;
+public static final int NORM_PRIORITY;
+public static final int MAX_PRIORITY;
+
+eg#3.
+class UserStatus
+{
+	public static final String AVAILABLE="Available";
+	public static final String BUSY="Busy";
+	public static final String IDLE="Idle";
+}
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		System.out.println(UserStatus.AVAILABLE);
+		System.out.println(UserStatus.BUSY);
+		System.out.println(UserStatus.IDLE);
+	}
+}
+Output
+Available
+Busy
+Idle
+
+To declare the constant variables in java application, if we use above convention then we are able to get the following problems.
+ 
+a. we must declare "public static final" for each constant variable explicitly.
+b. It is possible to allow multiple datatype to represent one type,it will reduces typednesss in java application.
+c. If we access constant variables then these variables will display their values, here constant variable values may
+   or may not reflect the actual meaning of constant variables.
+
+To resolve the above mention limitations, we need to go for "enum".
+
+
+enum(1.5V)
+++++++++++
+In case of enum, 
+1. All the constants are by default "public static final".
+2. All the constatns variables are by default the same type called "enum",it will improve the typedness of java
+   applications.
+3. All the constant variables are by default "Named Constants" that is these constant variables will display their
+   names instead of their values.
+
+General Syntax
+  [Access_modifier] enum EnumName{
+	---List of Constants----
+  }
+
+eg#1.
+//Group of "NamedConstants"
+enum User_Status{
+	AVAILABLE,BUSY,IDLE; //semicolon is optional
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		System.out.println(User_Status.AVAILABLE);
+		System.out.println(User_Status.BUSY);
+		System.out.println(User_Status.IDLE);
+
+	}
+}
+Output
+AVAILABLE
+BUSY
+IDLE
+
+Upon Compilation of enum code
++++++++++++++++++++++++++++++
+final class User_Status extends java.lang.Enum
+{
+	public static final User_Status AVAILABLE = new User_status();
+	public static final User_Status BUSY      = new User_status();
+	public static final User_Status IDLE      = new User_status();
+}
+
+
+eg#2.
+enum Result_Status{
+	PASS,FAIL,ABSENT;
+}
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		System.out.println(Result_Status.PASS);
+		System.out.println(Result_Status.FAIL);
+		System.out.println(Result_Status.ABSENT);
+	}
+}
+
+Upon Compilation of enum code
++++++++++++++++++++++++++++++
+final class Result_Status extends java.lang.Enum
+{
+	public static final Result_Status PASS 	  = new Result_status();
+	public static final Result_Status FAIL    = new Result_status();
+	public static final Result_Status ABSENT  = new Result_status();
+}
+
+Note: 
+1. Internally enum concept is implemented using "class" concept.
+2. Every enum constant is a reference variable to that enum type object.
+3. Every enum constant is by default public static final.
+4. Internaly inside every enum toString() is implemented to return the name of the constant.
+5. By using enum we can define our own datatypes which comes under "UserDefinedDatatype"
+		eg: class,enum
+
+
+enum in switch
+++++++++++++++
+// JDK1.4V -> allowed argument types are :: byte,short,char,int
+// JDK1.5V -> byte,short,char,int + Wrapperclasses + enum types
+// JDK1.7V -> byte,short,char,int + Wrapperclasses + enum types + String type
+
+enum Result_Type{
+	PASS,FAIL,ABSENT;
+}
+class ResultType{
+	public static final String PASS   = "pass";
+	public static final String FAIL   = "fail";
+	public static final String ABSENT = "absent";
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		System.out.println("Using String");
+		String result = ResultType.PASS;
+		switch (result)
+		{
+			case "pass":System.out.println("FCD");
+						break;
+			case "fail":System.out.println("Ooops....");
+						break;
+			case "absent":System.out.println("Absent...");
+						break;
+			case "Rajinikanth": System.out.println("Invalid input");
+						break;
+			default : System.out.println("invalid option...");
+		}
+			
+		System.out.println();
+
+		System.out.println("Using ENUM");
+		Result_Type resultType=Result_Type.PASS;
+		switch (resultType)
+		{
+			case PASS:System.out.println("FCD");
+							break;
+			case FAIL:System.out.println("Ooops....");
+							break;
+			case ABSENT:System.out.println("Absent..."); 
+							break;
+			default : System.out.println("invalid option...");
+		}
+
+	}
+}
+Output
+Using String
+FCD
+
+Using ENUM
+FCD
+
+Note: If we are passing enum type as the argument to switch, then those case labels should be always valid enum
+      constants only, otherwise it would result in "CompilertimeError".
+
+
+What are the places where enum can be defined in java program?
+a. Inside the class. //valid
+	class X{
+		enum Y{
+
+		}
+	}
+
+b. Inside the method. //invalid
+	class X{
+		public void m1(){
+			enum Y{
+
+			}
+		}
+	}
+
+Enum vs inheritance
++++++++++++++++++++
+1. Every enum is by default final, so enum won't participate in inheritance.
+2. Every enum by default will inherit from "java.lang.Enum", so explicitly enum can't inherit from 
+   another class because java won't support mulitple inheritance through classes.
+3. Enum can implement any no of interfaces silmultaneously.
+
+1. 
+enum X{}
+enum Y extends X{} //invalid
+
+2. 
+enum X extends Enum{} //invalid
+
+3. class X{}
+   enum Y extends X{} //invalid
+
+4. enum X{}
+   class Y extends X{} //invalid
+
+5. interface X{}
+   enum Y implements X{} //valid
+
+
+java.lang.Enum
+++++++++++++++
+1. For every enum the java.lang.Enum would act like a base class.
+2. It implements serializable and cloneable interface.
+3. It is a direct child class of "Object" class.
+
+a. values()   => it lists all constants of enum
+b. public final int ordinal() => it prints the order of constants.
+
+Speciality of enum
+++++++++++++++++++
+1. Inside enum we can write
+	a. method		: static,instance :: only concrete, no abstract methods
+	b. constructor		: yes
+	c. normal variables	: yes
+	d. constants		: yes
+
+
+eg#1.
+enum ResultType{
+	PASS,FAIL,ABSENT;
+	public void methodOne(){
+
+	}
+	public static void main(String[] args){
+		System.out.println("inside enum main()...");
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		ResultType[] result = ResultType.values();
+		for(ResultType resultType : result)
+			System.out.println(resultType+"......"+resultType.ordinal());
+	}
+}
+
+Output
+D:\OctBatchMicroservices>javac Test.java
+
+D:\OctBatchMicroservices>java Test
+PASS......0
+FAIL......1
+ABSENT......2
+
+D:\OctBatchMicroservices>java ResultType
+inside enum main()...
+
+
+Note: In addition to constants, we can write extra members like methods then the list of constants should be in 
+      1st line and it should end with semicolon.
+      If we are taking any extra member then enum should contain atleast one constant.
+      Empty enum is also valid.
+
+case1:
+
+//Invalid
+enum ResultType{
+	public void methodOne(){}
+	PASS,FAIL,ABSENT;
+}
+
+Case2:
+
+//Invalid
+enum ResultType{
+	public void methodOne(){}
+}
+
+Case3:
+
+//valid
+enum ResultType{
+	
+}
+
+Case4:
+
+//valid
+enum ResultType{
+	PASS,FAIL,ABSENT; //; is compulsory
+	public void methodOne(){}
+}
+
+Case5:
+
+//valid
+enum ResultType{
+	;
+	public void methodOne(){}
+}
+
+
+Enum vs Constructor
++++++++++++++++++++
+1.Enum can contain a constructor.
+2. Every enum constant represent an object of that enum class which is static.
+3. Enum constants will be created at the time of loading the .class file which internally triggers constructor to create an object.
+
+
+eg#1.
+
+enum ResultType{
+	PASS,FAIL,ABSENT;
+	
+	//public static final ResultType PASS   = new ResultType();
+	//public static final ResultType FAIL   = new ResultType();
+	//public static final ResultType ABSENT = new ResultType();
+
+
+	static{
+		System.out.println("ResultType.class file is loading...\n");
+	}
+
+	ResultType(){
+		System.out.println("Constructor is called...");
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		ResultType result = ResultType.PASS;
+	}
+}
+
+Output
+
+D:\OctBatchMicroservices>javac Test.java
+
+D:\OctBatchMicroservices>java Test
+Consturctor is called...
+Consturctor is called...
+Consturctor is called...
+ResultType.class file is loading...
+
+
+eg#2.
+enum ResultType{
+
+	PASS,FAIL,ABSENT;
+	
+	//public static final ResultType PASS   = new ResultType();
+	//public static final ResultType FAIL   = new ResultType();
+	//public static final ResultType ABSENT = new ResultType();
+
+	static{
+		System.out.println("ResultType.class file is loading...\n");
+	}
+
+	ResultType(){
+		System.out.println("Constructor is called...");
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		ResultType resultType = new ResultType();
+		System.out.println(resultType);
+	}
+}
+
+Output
+D:\OctBatchMicroservices>javac Test.java
+Test.java:22: error: enum classes may not be instantiated
+
+
+
+Output
+enum ResultType{
+	PASS(65),FAIL(28),ABSENT;
+
+	int marks;
+	
+	//public static final ResultType PASS   = new ResultType(65);
+	//public static final ResultType FAIL   = new ResultType(28);
+	//public static final ResultType ABSENT = new ResultType();
+
+	static{
+		System.out.println("ResultType.class file is loading...\n");
+	}
+
+	ResultType(){
+		marks = 0;
+		System.out.println("Zero argument constructor is called...");
+	}
+	ResultType(int marks){
+		this.marks = marks;
+		System.out.println("Parameterized Constructor is called...");
+	}
+
+	public int getMarks(){
+		return marks;
+	}
+}
+public class Test
+{
+	public static void main(String[] args)
+	{
+		ResultType[] result = ResultType.values();
+		for (ResultType resultType : result )
+		{
+			System.out.println(resultType + "........ " +resultType.getMarks());
+		}
+	}
+}
+Output
+Parameterized Constructor is called...
+Parameterized Constructor is called...
+Zero argument constructor is called...
+ResultType.class file is loading...
+
+PASS........ 65
+FAIL........ 28
+ABSENT........ 0
+
+What is the difference b/w enum,Enum,Enumeration?
+enum -> it is a keyword which is used to define group of "NamedConstants".
+Enum -> it is a inbuilt class which acts like a base class for every userdefined enum.
+Enumeration -> it is an interface which is a part of java.util package, using this interface we can iterate an object from collections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
